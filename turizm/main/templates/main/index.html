@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Туризм</title>
+</head>
+<body style="background-color: darkgrey; font-family: monospace">
+    <div style="background-color: dimgrey">
+        <h1 style="text-align: center">Добро пожаловать</h1>
+    </div>
+    <div style="background-color: dimgrey">
+        <form action="" method="post" style="margin: 10px;">
+            {% csrf_token %}
+            <br>
+            <label>ФИО: ----------</label>
+            {{form.text_fio}}
+            <br><br>
+            <label>Номер телефона: </label>
+            {{form.text_phone}}
+            <br><br>
+            <label>Ваша страна: --</label>
+            {{form.text_country}}
+            <br><br>
+            <label>Город: --------</label>
+            {{form.text_city}}
+            <br><br>
+            <label>Индекс: -------</label>
+            {{form.text_city_index}}
+            <br><br>
+            <label>Куда : --------</label>
+            {{form.text_place}}
+            <br><br>
+            <input type="submit">
+            <!-- <label>ФИО: ----------</label>
+            <input type="text" name="text_fio" required> <br> <br>
+            <label>Номер телефона: </label>
+            <input type="text" name="text_num" required> <br> <br>
+            <label>Ваша страна: --</label>
+            <input type="text" name="text_country" required> <br> <br>
+            <label>Город: --------</label>
+            <input type="text" name="text_city" required> <br> <br>
+            <label>Индекс: -------</label>
+            <input type="text" name="text_index" required> <br> <br>
+            <label>Куда : --------</label>
+            <input type="text" name="text_place" required> <br> <br>
+            <input type="submit"> -->
+        </form>
+    </div>
+    <div>
+        <br>
+        <a href="{% url 'countries' %}"><h2>Список стран в которые вы можете полететь </h2></a>
+        <br>
+        <a href="/admin"><h2>Админ </h2></a>
+        <br>
+    </div>
+</body>
+</html>
