@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select</title>
+</head>
+<body style="background-color: darkgrey">
+{% for el in select_list %}
+    <h3>{{el.1}}</h3>
+    <a href="/update/{{el.0}}">Изменить</a>
+    <a href="/delete/{{el.0}}">Удалить</a>
+    <br><br>
+{% endfor %}
+</body>
+</html>

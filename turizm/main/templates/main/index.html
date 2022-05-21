@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Туризм</title>
 </head>
-<body style="background-color: darkgrey; font-family: monospace">
+<body style="background-color: darkgrey; font-family: modarkgreynospace">
     <div style="background-color: dimgrey">
         <h1 style="text-align: center">Добро пожаловать</h1>
     </div>
@@ -48,9 +48,10 @@
     </div>
     <div>
         <br>
-        <a href="{% url 'countries' %}"><h2>Список стран в которые вы можете полететь </h2></a>
-        <br>
-        <a href="/admin"><h2>Админ </h2></a>
+        <a href="{% url 'countries' %}"><h3>Список стран в которые вы можете полететь </h3></a>
+        <a href="/admin"><h3>Админ </h3></a>
+        <a href="{% url 'tables' %}"><h3>Таблицы </h3></a>
+        <a href="{% url 'select' %}"><h3>Изменить</h3></a>
         <br>
     </div>
 </body>
