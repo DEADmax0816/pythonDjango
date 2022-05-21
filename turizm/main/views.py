@@ -73,8 +73,9 @@ def table_users(request):
         s += str(el.city_index) + ' '
         s += '<br>'
 
-    return HttpResponse(f"<h2>{s}</h2>"
-                        f"<a href = '/tables'>Назад</a>")
+    return HttpResponse(f"<body style='font-family: monospace'>"
+                        f"<h2>{s}</h2>"
+                        f"<a href = '/tables'>Назад</a></body>")
 
 
 def table_tickets(request):
@@ -85,8 +86,9 @@ def table_tickets(request):
         s += str(el.user) + ' '
         s += str(el.country) + ' '
         s += '<br>'
-    return HttpResponse(f"<h2>{s}</h2>"
-                        f"<a href = '/tables'>Назад</a>")
+    return HttpResponse(f"<body style='font-family: monospace'>"
+                        f"<h2>{s}</h2>"
+                        f"<a href = '/tables'>Назад</a></body>")
 
 
 def select(request):

@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <title>Update</title>
 </head>
-<body style="background-color: darkgrey">
+<body style="background-color: darkgrey; font-family: monospace">
 <form method="post">
     {% csrf_token %}
-    <label>ФИО: -------------</label>
+    <label>ФИО: ----------</label>
     {{form.update_fio}} <br><br>
     <label>Номер телефона: </label>
     {{form.update_phone}} <br><br>
-    <label>Ваша страна: ----</label>
+    <label>Ваша страна: --</label>
     {{form.update_country}} <br><br>
-    <label>Город: ------------</label>
+    <label>Город: --------</label>
     {{form.update_city}} <br><br>
-    <label>Индекс: ----------</label>
+    <label>Индекс: -------</label>
     {{form.update_city_index}} <br><br>
     <input type="submit">
 </form>
