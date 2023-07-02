@@ -11,6 +11,9 @@ class Users(models.Model):
     def __str__(self):
         return f'User {self.fio}'
 
+    def to_string(self):
+        return f'{self.id} {self.fio} {self.phone} {self.country} {self.city} {self.city_index}'
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -37,3 +40,6 @@ class Tickets(models.Model):
 
     def __str__(self):
         return f'Ticket {self.id}'
+
+    def to_string(self):
+        return f'{self.id} {self.user} {self.country}'

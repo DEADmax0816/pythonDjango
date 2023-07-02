@@ -1,46 +1,48 @@
+import django.db.utils
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
 from .forms import *
+from .my_utils.utils import table_model
 
 
 def index(request):
     form = UsersForm(request.POST or None)
-    if request.method == 'POST':
-        if form.is_valid():
-            fio = form.cleaned_data.get('text_fio')
-            phone = form.cleaned_data.get('text_phone')
-            country = form.cleaned_data.get('text_country')
-            city = form.cleaned_data.get('text_city')
-            city_index = form.cleaned_data.get('text_city_index')
-            place = form.cleaned_data.get('text_place')
 
-            if not Countries.objects.filter(country=place).exists():
-                return redirect('country-error')
+    if request.method == 'GET':
+        context = {
+            'form': form
+        }
+        return render(request, 'main/index.html', context)
 
-            newUser = Users(fio=fio, phone=phone, country=country, city=city, city_index=city_index)
+    if form.is_valid():
+        fio = form.cleaned_data.get('text_fio')
+        phone = form.cleaned_data.get('text_phone')
+        country = form.cleaned_data.get('text_country')
+        city = form.cleaned_data.get('text_city')
+        city_index = form.cleaned_data.get('text_city_index')
+        place = form.cleaned_data.get('text_place')
 
-            try:
-                newUser.save()
-            except Exception:
-                return HttpResponse('<h1>Пользователь с таким номером уже существует</h1>')
+        if not Countries.objects.filter(country=place).exists():
+            return redirect('country-error')
 
-            u = Users.objects.filter(phone=phone)
-            c = Countries.objects.filter(country=place)
-            u_id = u[0]
-            c_id = c[0]
-            newTicket = Tickets(user=u_id, country=c_id)
-            newTicket.save()
+        new_user = Users(fio=fio, phone=phone, country=country, city=city, city_index=city_index)
 
-            return HttpResponse("<h1>Данные отправлены успешно</h1>"
-                                "<a href = '/'>Назад</a>")
+        try:
+            new_user.save()
+        except django.db.utils.IntegrityError:
+            return HttpResponse('<h1>Пользователь с таким номером уже существует</h1>')
 
-        else:
-            return HttpResponse('<h1>Форма невалидна</h1>')
-    context = {
-        'form': form
-    }
-    return render(request, 'main/index.html', context)
+        new_ticket = Tickets(
+            user=new_user,
+            country=Countries.objects.get(country=place)
+        )
+        new_ticket.save()
+
+        return HttpResponse("<h1>Данные отправлены успешно</h1>"
+                            "<a href = '/'>Назад</a>")
+    else:
+        return HttpResponse('<h1>Форма невалидна</h1>')
 
 
 def country_error(request):
@@ -49,11 +51,10 @@ def country_error(request):
 
 
 def countries(request):
-    counties_list = Countries.objects.all()
-    s = ''
-    for el in counties_list:
-        s += str(el.country) + ' '
-    return HttpResponse(f"<h1>{s}</h1>"
+    counties_list = Countries.objects.values_list('country', flat=True)
+    counties_str = ', '.join(counties_list)
+
+    return HttpResponse(f"<h1>{counties_str}</h1>"
                         f"<a href = '/'>Назад</a>")
 
 
@@ -62,50 +63,24 @@ def tables(request):
 
 
 def table_users(request):
-    users_list = Users.objects.all()
-    s = ''
-    for el in users_list:
-        s += str(el.id) + ' '
-        s += str(el.fio) + ' '
-        s += str(el.phone) + ' '
-        s += str(el.country) + ' '
-        s += str(el.city) + ' '
-        s += str(el.city_index) + ' '
-        s += '<br>'
-
+    users_str = table_model(Users)
     return HttpResponse(f"<body style='font-family: monospace'>"
-                        f"<h2>{s}</h2>"
+                        f"<h2>{users_str}</h2>"
                         f"<a href = '/tables'>Назад</a></body>")
 
 
 def table_tickets(request):
-    tickets_list = Tickets.objects.all()
-    s = ''
-    for el in tickets_list:
-        s += str(el.id) + ' '
-        s += str(el.user) + ' '
-        s += str(el.country) + ' '
-        s += '<br>'
+    tickets_str = table_model(Tickets)
     return HttpResponse(f"<body style='font-family: monospace'>"
-                        f"<h2>{s}</h2>"
+                        f"<h2>{tickets_str}</h2>"
                         f"<a href = '/tables'>Назад</a></body>")
 
 
 def select(request):
-    users_list = Users.objects.all()
+    users_query = Users.objects.all()
     select_list = []
-    for el in users_list:
-        temp = []
-        s = ''
-        s += str(el.id) + ' '
-        s += str(el.fio) + ' '
-        s += str(el.phone) + ' '
-        s += str(el.country) + ' '
-        s += str(el.city) + ' '
-        s += str(el.city_index) + ' '
-        temp.append(el.id)
-        temp.append(s)
-        select_list.append(temp)
+    for user in users_query:
+        select_list.append((user.id, user.to_string()))
 
     context = {
         'select_list': select_list
@@ -127,37 +102,35 @@ def update(request, id):
     except Users.DoesNotExist:
         return HttpResponse("<h2>Такого пользователя нет в таблице</h2>")
 
-    if request.method == 'POST':
-        form = UpdateUserForm(request.POST or None)
-        if form.is_valid():
-            new_fio = form.cleaned_data.get('update_fio')
-            new_phone = form.cleaned_data.get('update_phone')
-            new_country = form.cleaned_data.get('update_country')
-            new_city = form.cleaned_data.get('update_city')
-            new_city_index = form.cleaned_data.get('update_city_index')
+    if request.method == 'GET':
+        context = {
+            'form': form
+        }
+        return render(request, 'main/update.html', context)
 
-            user.fio = new_fio
-            user.phone = new_phone
-            user.country = new_country
-            user.city = new_city
-            user.city_index = new_city_index
-
-            try:
-                user.save()
-                return HttpResponse(f"<h2>Данные изменены</h2>"
-                                    f"<a href = '/'>На главную</a>")
-            except Exception:
-                return HttpResponse(f"<h2>Что-то пошло не так</h2>")
-
-    context = {
-        'form': form
-    }
-    return render(request, 'main/update.html', context)
+    form = UpdateUserForm(request.POST or None)
+    if form.is_valid():
+        new_fio = form.cleaned_data.get('update_fio')
+        new_phone = form.cleaned_data.get('update_phone')
+        new_country = form.cleaned_data.get('update_country')
+        new_city = form.cleaned_data.get('update_city')
+        new_city_index = form.cleaned_data.get('update_city_index')
+        user.fio = new_fio
+        user.phone = new_phone
+        user.country = new_country
+        user.city = new_city
+        user.city_index = new_city_index
+        try:
+            user.save()
+            return HttpResponse(f"<h2>Данные изменены</h2>"
+                                f"<a href = '/'>На главную</a>")
+        except Exception as err:
+            import datetime
+            print(f'[{datetime.datetime.now().strftime("%d/%b/%Y %H:%M:%S")}] Error: {err}')
+            return HttpResponse(f"<h2>Что-то пошло не так</h2>")
 
 
 def delete(request, id):
-    form = UpdateUserForm(request.POST or None)
-
     try:
         user = Users.objects.get(id=id)
         user.delete()
