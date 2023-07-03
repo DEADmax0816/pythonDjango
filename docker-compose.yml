@@ -1,0 +1,22 @@
+version: "3.8"
+name: python-django
+
+services:
+  web:
+    build: .
+    command: python3 -m gunicorn turizm.wsgi --reload
+    ports:
+      - "8000:8000"
+
+    # Environment vars:
+    # - SECRET_KEY
+    # - DEBUG
+    # - ALLOWED_HOSTS (separated by a space)
+    # - TZ
+
+    env_file:
+      - .env
+    volumes:
+      - type: bind
+        source: ./turizm/db.sqlite3
+        target: /app/turizm/db.sqlite3
